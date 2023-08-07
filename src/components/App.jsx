@@ -20,7 +20,7 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-   
+   console.log("mount")
     if (prevState.searchValue !== this.state.searchValue || prevState.page !== this.state.page ) 
          this.handleSearch()
     
