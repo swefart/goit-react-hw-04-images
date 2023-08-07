@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { LoadMoreButton } from "./LoadMoreBtn/LoadMoreBtn";
@@ -7,74 +7,89 @@ import { getImagesBySearch } from "./Api/Images";
 import Modal from "./Modal/Modal";
 
 
+const App = () => {
+  const [searchValue, setSearchValue] = useState('')
+  const [page, setPage] = useState(1)
+  const [images, setImages] = useState([])
+  const [showBtn, setShowBtn] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isShowModal, setIsShowModal] = useState(false)
+  const [url, setUrl] = useState('')
+  const [searchChange, setSearchChange] = useState('')
 
-class App extends Component {
-  state = {
-    searchValue: '',
-    page: 1,
-    images: [],
-    showBtn: false,
-    isLoading: false,
-    isShowModal: false,
-    url: '',
-  }
 
-  componentDidUpdate(prevProps, prevState) {
-   console.log("mount")
-    if (prevState.searchValue !== this.state.searchValue || prevState.page !== this.state.page ) 
-         this.handleSearch()
-    
-  }
-
-  handleSearch = async() => {
+  useEffect(() => {
+    if (!searchValue) return;
+      const handleSearch = async () => {
     try {
-      this.setState({ isLoading: true, showBtn: false})
-      const data = await getImagesBySearch(this.state.searchValue, this.state.page)
-      this.setState((prev) => ({ images: [...prev.images, ...data.hits], showBtn: this.state.page < (data.totalHits / 12), isLoading: false}))
+      setIsLoading(true);
+      setShowBtn(false)
+
+      const data = await getImagesBySearch(searchValue, page)
+      const { totalHits, hits } = data;
+      setImages(prev => [...prev, ...hits])
+      setShowBtn(page < (totalHits / 12))
+      setIsLoading(false)
+
     } catch {
-
     }
-  }
+        
+      }
 
-  onSubmitForm = (e) => {
+    handleSearch()
+    }, [searchValue, page])
+
+  
+  const handleChange = (e) => {
+      setSearchChange(e.target.value)
+    }
+    
+     const onSubmitForm = (e) => {
     e.preventDefault()
-    const prevValue = this.state.searchValue;
+  
     let currentValue = e.target.elements[1].value;
-    if (prevValue !== currentValue && currentValue.trim()) {
-   this.setState({ searchValue: currentValue, page: 1, images: [] }) 
+  
+       if (searchValue !== currentValue && currentValue.trim()) {
+         setSearchValue(searchChange)
+         setPage(1)
+         setImages([])
+ 
     }
-    e.target.elements[1].value = '';
+   
   }
 
-  onClickLoadMore = () => {
-    this.setState((prev) => ({ page: prev.page + 1}))
+  const onClickLoadMore = () => {
+    
+      setPage(prev => prev + 1)
+
     
   }
-  toggleModal = () => {
-    this.setState((prev) => ({ isShowModal: !prev.isShowModal}))
+  const toggleModal = () => {
+    setIsShowModal(!isShowModal)
+
   }
   
-  onGalleryClick = (props) => {
-    this.setState(({ isShowModal }) => { return { url: props, isShowModal: !isShowModal } })
+  const onGalleryClick = (props) => {
+    setUrl(props);
+    toggleModal()
+
   }
 
 
-  render() {
-    const { images } = this.state;
-    console.log(this.state.url)
-    console.log()
     return (
       
         <div>
-        <Searchbar onSubmit={this.onSubmitForm}></Searchbar>
-       {this.state.isLoading && <Loader/>}
-        <ImageGallery img={images} onClick={this.onGalleryClick } />
-        {this.state.showBtn && <LoadMoreButton onClick={this.onClickLoadMore} />}
-        {this.state.isShowModal && <Modal close={this.toggleModal} src={this.state.url}></Modal>}
+        <Searchbar onSubmit={onSubmitForm} handleChange={handleChange} searchValue={searchChange} ></Searchbar>
+       {isLoading && <Loader/>}
+        <ImageGallery img={images} onClick={onGalleryClick } />
+        {showBtn && <LoadMoreButton onClick={onClickLoadMore} />}
+        {isShowModal && <Modal close={toggleModal} src={url}></Modal>}
   </div>
     )
-  }
+  
 
-};
+}
+
+
 
 export default App
