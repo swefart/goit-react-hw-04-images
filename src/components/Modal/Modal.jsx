@@ -12,7 +12,7 @@ const Modal = ({ close, src }) => {
     useEffect(() => {
         document.addEventListener('keydown', handleEsc)
         
-    }, [])
+    })
 
     const handleClick = () => {
         close()
