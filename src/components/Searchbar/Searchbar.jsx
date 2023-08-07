@@ -1,7 +1,6 @@
 import { SearchForm, Header, SearchFormButton, ButtonLabel, SearchInput } from "./Searchbar.styled";
 
 export const Searchbar = ({ onSubmit, handleChange, searchValue }) => {
-console.log(searchValue)
         return (
             <Header>
                 <SearchForm onSubmit={onSubmit}>

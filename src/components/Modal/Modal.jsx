@@ -13,7 +13,7 @@ const Modal = ({ close, src }) => {
 
     const handleEsc = ({ code }) => {
         
-        if (code === 'KeyC') close()
+        if (code === 'Escape') close()
     }
 
 

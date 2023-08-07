@@ -9,13 +9,14 @@ import Modal from "./Modal/Modal";
 
 const App = () => {
   const [searchValue, setSearchValue] = useState('')
+  const [searchChange, setSearchChange] = useState('')
   const [page, setPage] = useState(1)
   const [images, setImages] = useState([])
   const [showBtn, setShowBtn] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isShowModal, setIsShowModal] = useState(false)
   const [url, setUrl] = useState('')
-  const [searchChange, setSearchChange] = useState('')
+  
 
 
   useEffect(() => {
@@ -40,16 +41,14 @@ const App = () => {
     }, [searchValue, page])
 
   
-  const handleChange = (e) => {
+    const handleChange = (e) => {
       setSearchChange(e.target.value)
     }
     
      const onSubmitForm = (e) => {
     e.preventDefault()
   
-    let currentValue = e.target.elements[1].value;
-  
-       if (searchValue !== currentValue && currentValue.trim()) {
+       if (searchValue !== searchChange && searchChange.trim()) {
          setSearchValue(searchChange)
          setPage(1)
          setImages([])
@@ -59,20 +58,15 @@ const App = () => {
   }
 
   const onClickLoadMore = () => {
-    
       setPage(prev => prev + 1)
-
-    
   }
   const toggleModal = () => {
     setIsShowModal(!isShowModal)
-
   }
   
   const onGalleryClick = (props) => {
     setUrl(props);
     toggleModal()
-
   }
 
 
