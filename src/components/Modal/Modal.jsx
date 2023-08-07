@@ -3,14 +3,17 @@ import { useEffect } from "react";
 
 
 
-const Modal = ({close, src}) => {
+const Modal = ({ close, src }) => {
+    
+    const handleEsc = ({ code }) => {
+        if (code === 'Escape') close()
+    }
+
     useEffect(() => {
         document.addEventListener('keydown', handleEsc)
         
     }, [])
-    const handleEsc = ({ code }) => {
-        if (code === 'Escape') close()
-    }
+
     const handleClick = () => {
         close()
     }
